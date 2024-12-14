@@ -1,4 +1,5 @@
-﻿@page "/skintranslator/{initialSearchKey?}"
+﻿@page "/skintranslator"
+@rendermode InteractiveServer
 
 <PageTitle>Apex Skins Translator</PageTitle>
 
@@ -11,20 +12,20 @@
 else
 {
     <div class="d-flex justify-content-center mb-4 row">
-        <div class="d-flex flex-column align-items-center col-1">
+        <div class="d-flex flex-column align-items-center col-2">
             <p class="mt-3 mb-0">Search:</p>
             <input class="m-2 form-control" style="width: 200px" type="text" placeholder="Search" @bind="searchKey"
-                @bind:event="oninput" @bind:after="UpdateFilteredAndSortedData" />
+                @bind:event="oninput" />
         </div>
-        <div class="d-flex flex-column align-items-center col-1">
+        <div class="d-flex flex-column align-items-center col-2">
             <p class="mt-3 mb-0">Sort by:</p>
             <div class="d-flex">
-                <select class="m-2 form-control" style="width: 125px" @bind="sortField" @bind:event="onchange">
+                <select class="m-2 form-control" style="width: 125px" @bind="sortField">
                     <option value="ingamename">Ingame Name</option>
-                    <option value="Model">Model</option>
-                    <option value="Texture">Material</option>
+                    <option value="model">Model</option>
+                    <option value="texture">Material</option>
                 </select>
-                <select class="m-2 form-control" style="width: 125px" @bind="sortOrder" @bind:event="onchange">
+                <select class="m-2 form-control" style="width: 125px" @bind="sortOrder">
                     <option value="asc">Ascending</option>
                     <option value="desc">Descending</option>
                 </select>
@@ -37,8 +38,7 @@ else
         {
             <div class="row">
                 <div class="col-12">
-                    <h2 class="pb-3 text-center">@data.legend
-                    </h2>
+                    <h2 class="pb-3 text-center">@data.legend</h2>
                     <div class="border border-dark w-100 p-3 shadow card bg-light mb-5 overflow-auto">
                         <div class="card-body">
                             <table class="table table-sm table-bordered table-hover">
@@ -53,9 +53,8 @@ else
                                 <tbody>
                                     @if (data.details?.Any() == true)
                                     {
-                                        foreach (var detail in data.details
-                                        .OrderBy(detail => detail.ingamename == "Base Skin" ? (sortOrder == "asc" ? "" : "~") :
-                                        detail.GetType().GetProperty(sortField)?.GetValue(detail)?.ToString())
+                                        var orderedDetails = GetOrderedDetails(data.details);
+                                        foreach (var detail in orderedDetails
                                         .Where(detail => string.IsNullOrEmpty(searchKey) ||
                                         (detail.ingamename?.Contains(searchKey, StringComparison.OrdinalIgnoreCase) ?? false) ||
                                         (detail.model?.Contains(searchKey, StringComparison.OrdinalIgnoreCase) ?? false)))
@@ -98,32 +97,32 @@ else
 
 @code {
     private List<SkinData>? Data { get; set; }
-    private string? searchKey { get; set; } = "";
-
+    private string? searchKey { get; set; } = string.Empty;
     private string sortField { get; set; } = "ingamename";
-
     private string sortOrder { get; set; } = "asc";
-    [Parameter]
-    public string? initialSearchKey { get; set; }
 
-    private List<SkinData> FilteredAndSortedData { get; set; } = new List<SkinData>();
-    private void UpdateFilteredAndSortedData()
+    private IEnumerable<SkinData> FilteredAndSortedData =>
+    Data?.Where(item =>
     {
-        Console.WriteLine($"SearchKey: {searchKey}");
-        var filteredData = Data?.Where(item =>
+        if (!string.IsNullOrEmpty(searchKey))
         {
-            if (!string.IsNullOrEmpty(searchKey))
-            {
-                return item.legend.Contains(searchKey, StringComparison.OrdinalIgnoreCase) ||
+            return item.legend.Contains(searchKey, StringComparison.OrdinalIgnoreCase) ||
     item.details.Any(detail =>
     (detail.ingamename?.Contains(searchKey, StringComparison.OrdinalIgnoreCase) ?? false) ||
     (detail.model?.Contains(searchKey, StringComparison.OrdinalIgnoreCase) ?? false));
-            }
-            return true;
-        }).ToList() ?? new List<SkinData>();
+        }
+        return true;
+    })
+    .OrderBy(item => item.legend)
+    .ToList() ?? new List<SkinData>();
 
-        Console.WriteLine($"FilteredData Count: {filteredData.Count}");
-        FilteredAndSortedData = filteredData.OrderBy(item => item.legend).ToList();
+    private IEnumerable<SkinDetail> GetOrderedDetails(IEnumerable<SkinDetail> details)
+    {
+        return sortOrder == "asc"
+        ? details.OrderBy(detail => detail.ingamename == "Base Skin" ? "" :
+        detail.GetType().GetProperty(sortField)?.GetValue(detail)?.ToString())
+        : details.OrderByDescending(detail => detail.ingamename == "Base Skin" ? "" :
+        detail.GetType().GetProperty(sortField)?.GetValue(detail)?.ToString());
     }
 
     protected override async Task OnInitializedAsync()
@@ -137,7 +136,6 @@ else
             {
                 var json = await response.Content.ReadAsStringAsync();
                 Data = JsonSerializer.Deserialize<List<SkinData>>(json);
-                UpdateFilteredAndSortedData();
             }
             else
             {
@@ -149,10 +147,10 @@ else
             Console.WriteLine($"Exception: {ex.Message}");
         }
 
-        if (!string.IsNullOrEmpty(initialSearchKey))
+        var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("search", out var _initialSearch))
         {
-            searchKey = initialSearchKey;
-            UpdateFilteredAndSortedData();
+            searchKey = _initialSearch.ToString();
         }
     }
 }
