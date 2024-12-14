@@ -6,18 +6,63 @@
 
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+<div class="nav-scrollable">
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span>Home
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span>
+                Home
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="skintranslator">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span>Apex Skins Translator
+                <span class="bi bi-globe-nav-menu" aria-hidden="true"></span>
+                Apex Skins Translator
             </NavLink>
+        </div>
+
+        <div class="nav-item px-3 pt-2">
+            <details class="ps-3">
+                <summary>
+                    <h5 class="text-light">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span>
+                        <span class="bi bi-arrow-down-nav-menu" aria-hidden="true"></span>
+                        Archives
+                    </h5>
+                </summary>
+                <NavLink class="nav-link pe-0" href="https://biast12.site" target="_blank">
+                    <span class="bi bi-link-45deg-nav-menu" aria-hidden="true"></span>
+                    Apex Archives
+                </NavLink>
+                <NavLink class="nav-link pe-0" href="https://lite.biast12.site" target="_blank">
+                    <span class="bi bi-link-45deg-nav-menu" aria-hidden="true"></span>
+                    Apex Archives (Lite)
+                </NavLink>
+                <NavLink class="nav-link pe-0" href="https://oldbuilds.biast12.site" target="_blank">
+                    <span class="bi bi-link-45deg-nav-menu" aria-hidden="true"></span>
+                    Old Apex Builds
+                </NavLink>
+                <div class="nav-item ps-3 pt-2 pb-0">
+                    <details>
+                        <summary>
+                            <h5 class="text-light">
+                                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span>
+                                <span class="bi bi-arrow-down-nav-menu" aria-hidden="true"></span>
+                                Sync Links
+                            </h5>
+                        </summary>
+                        <NavLink class="nav-link pe-0" href="https://biast12.site/sync" target="_blank">
+                            <span class="bi bi-link-45deg-nav-menu" aria-hidden="true"></span>
+                            Apex Archives
+                        </NavLink>
+                        <NavLink class="nav-link pe-0" href="https://lite.biast12.site/sync" target="_blank">
+                            <span class="bi bi-link-45deg-nav-menu" aria-hidden="true"></span>
+                            Apex Archives (Lite)
+                        </NavLink>
+                    </details>
+                </div>
+            </details>
         </div>
     </nav>
 </div>
