@@ -37,6 +37,13 @@ else
         <div class="row mb-5">
             <div class="col-12">
                 <h2 class="text-center">@item.legend</h2>
+                <h6 class="text-center">
+                    <span class="fw-bold">Animations:</span>
+                    <a target="_blank"
+                        href="https://lite.biast12.site/Legends/Animations/@item.legend/@(item.details?.FirstOrDefault()?.animation)">
+                        @item.details?.FirstOrDefault()?.animation
+                    </a>
+                </h6>
                 <div class="card border-dark shadow-sm bg-light overflow-auto">
                     <div class="card-body">
                         <table class="table table-bordered table-hover">
@@ -45,7 +52,6 @@ else
                                     <th>Ingame Name</th>
                                     <th>Model</th>
                                     <th>Material</th>
-                                    <th>Animation</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -64,12 +70,6 @@ else
                                             <td>
                                                 <a target="_blank" href="https://lite.biast12.site/Legends/Textures/@item.legend">
                                                     @detail.texture
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a target="_blank"
-                                                    href="https://lite.biast12.site/Legends/Animations/@item.legend/@detail.animation">
-                                                    @detail.animation
                                                 </a>
                                             </td>
                                         </tr>
