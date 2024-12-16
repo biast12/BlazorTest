@@ -124,11 +124,12 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var client = HttpClientFactory.CreateClient("ApexSkinsTranslatorClient");
+        HttpClient ApexSkinsTranslatorClient = new HttpClient();
+        ApexSkinsTranslatorClient.BaseAddress = new Uri("https://api.biast12.site/");
 
         try
         {
-            var response = await client.GetAsync("apex_skin_translator");
+            var response = await ApexSkinsTranslatorClient.GetAsync("apex_skin_translator");
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
